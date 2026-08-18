@@ -1,0 +1,53 @@
+# Top‑level EditorConfig (stop searching upward)
+root = true
+
+############################
+# Core defaults – all files
+############################
+[*]
+charset                 = utf-8
+end_of_line             = lf           # Keeps git diffs cleaner across OSes
+indent_style            = space
+indent_size             = 2            # JavaScript/TypeScript community standard
+insert_final_newline    = true         # Ensures POSIX‑friendly files
+trim_trailing_whitespace = true        # Prevents noisy diffs
+
+######################################
+# Text & markup that allow long lines
+######################################
+[*.{md,mdx,adoc,txt,html}]
+max_line_length         = off          # Don’t hard‑wrap prose
+trim_trailing_whitespace = false       # Let authors keep intentional spaces
+
+################################
+# JSON / YAML (config files)
+################################
+[*.{json,jsonc,yaml,yml}]
+indent_style            = space
+indent_size             = 2
+insert_final_newline    = true
+# Keep trailing whitespace off, but turn line‑length checks off in tooling
+
+################################
+# Source code – JS / TS / JSX
+################################
+[*.{js,jsx,ts,tsx,cjs,mjs}]
+indent_style            = space
+indent_size             = 2
+quote_type              = single       # Works with most Prettier configs
+insert_final_newline    = true
+
+##############################
+# Stylesheets
+##############################
+[*.{css,scss,sass,less}]
+indent_style            = space
+indent_size             = 2
+
+##############################
+# Generated / vendored stuff
+##############################
+[*.{min.js,min.css,lock,svg,png,jpg,jpeg,gif,ico}]
+# Skip whitespace rules so build artefacts stay unmodified
+trim_trailing_whitespace = false
+insert_final_newline     = false

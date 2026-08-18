@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "lib": ["ESNext", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "build",
+    "baseUrl": ".",
+    "paths": {
+      "@testing/*": ["*"],
+      "@testing/utils/*": ["utils/*"],
+      "@testing/helpers/*": ["helpers/*"],
+      "@testing/selectors/*": ["selectors/*"],
+      "@testing/tests/*": ["tests/*"]
+    }
+  },
+  "include": ["selectors", "helpers", "tests", "global-setup.ts", "playwright.config.ts"]
+}

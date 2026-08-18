@@ -1,0 +1,10 @@
+@import '../../styles/helpers';
+
+.chart {
+  background-color: $white;
+  padding: 1rem;
+  border-radius: 10px;
+}
+.chartTitle {
+  color: $base-dark-gray;
+}

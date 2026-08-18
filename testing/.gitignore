@@ -1,0 +1,8 @@
+node_modules/
+PLAYWRIGHT_REPORTS/
+reports/
+.nyc_output
+.env.*
+!.env.example
+auth.json
+test-results/

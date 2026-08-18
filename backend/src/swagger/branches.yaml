@@ -1,0 +1,447 @@
+tags:
+  - name: Branches
+    description: The Branches managing API
+
+paths:
+  /api/branches:
+    post:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Create new branch
+      description: Create new branch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBranchRequest'
+      responses:
+        200:
+          description: The branch was successfully created
+          content:
+            application/json:
+              schema:
+                type: boolean
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          $ref: '#/components/responses/ValidationError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Get all branches
+      description: Get all branches with pagination and filtering
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of items per page
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Filter by branch name
+        - in: query
+          name: parentName
+          schema:
+            type: string
+          description: Filter by parent branch name
+        - in: query
+          name: inactive
+          schema:
+            type: boolean
+          description: Filter by inactive status
+        - in: query
+          name: branchType
+          schema:
+            type: string
+            format: uuid
+          description: Pipe-separated branch type UUIDs to filter by (uuid1|uuid2|uuid3)
+        - in: query
+          name: parent
+          schema:
+            type: string
+            format: uuid
+          description: Pipe-separated parent branch UUIDs to filter by (uuid1|uuid2|uuid3)
+        - in: query
+          name: expandable
+          schema:
+            type: boolean
+          description: Enable expandable tree view
+        - in: query
+          name: expandedRows
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          description: Array of expanded row IDs for tree view
+      responses:
+        200:
+          description: Branches list successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchesListResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/branches/form-sheet:
+    post:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Import branches from sheet
+      description: Bulk import branches from spreadsheet data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportBranchesRequest'
+      responses:
+        200:
+          description: Branches were successfully imported
+          content:
+            application/json:
+              schema:
+                type: boolean
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        400:
+          $ref: '#/components/responses/ValidationError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/branches/optimizer:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Get branches for optimizer
+      description: Get branches data optimized for scheduling algorithms
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: name
+          schema:
+            type: string
+        - in: query
+          name: branchType
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: parent
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Optimizer branches data successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchOptimizerResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/branches/autocomplete:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Get branches for autocomplete
+      description: Get branches data for autocomplete components
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search query
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of results
+      responses:
+        200:
+          description: Autocomplete data successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchAutocompleteResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/branches/lowest/autocomplete:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Get lowest level branches for autocomplete
+      description: Get branches from the lowest level branch types for autocomplete
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search query
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of results
+      responses:
+        200:
+          description: Lowest level branches autocomplete data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchAutocompleteResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/branches/highest/autocomplete:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Get highest level branches for autocomplete
+      description: Get branches from the highest level branch types for autocomplete
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search query
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of results
+      responses:
+        200:
+          description: Highest level branches autocomplete data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchAutocompleteResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/branches/sheet-data:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Get data for branch sheet operations
+      description: Get branch types and parent branches for sheet import/export
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Sheet data successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchSheetDataResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/branches/{id}:
+    put:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Update branch
+      description: Update the data of the selected branch
+      parameters:
+        - in: path
+          name: id
+          description: Branch ID to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Updated branch data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBranchRequest'
+      responses:
+        200:
+          description: The branch was successfully updated
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Delete branch
+      description: Delete the selected branch
+      parameters:
+        - in: path
+          name: id
+          description: Branch ID to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: The branch was successfully deleted
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Get branch by ID
+      description: Get branch details by ID
+      parameters:
+        - in: path
+          name: id
+          description: Branch ID to get
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Branch successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchView'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/branches/scheduler-lock-switch/{id}:
+    put:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Toggle branch scheduler lock
+      description: Toggle the scheduler lock status of a branch (requires special permissions)
+      parameters:
+        - in: path
+          name: id
+          description: Branch ID to toggle lock
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Scheduler lock status successfully toggled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulerLockSwitchResponse'
+        403:
+          description: User does not have permission to edit scheduler lock
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/branches/is-scheduler-locked/branch/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Branches]
+      summary: Check scheduler lock status
+      description: Check if branch or its ancestors have scheduler lock enabled
+      parameters:
+        - in: path
+          name: id
+          description: Branch ID to check
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Scheduler lock status successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulerLockStatusResponse'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'

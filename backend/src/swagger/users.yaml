@@ -1,0 +1,718 @@
+tags:
+  - name: Users
+    description: The Users managing API
+
+paths:
+  /api/users:
+    post:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Create new user
+      description: Create a new user with all related data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        200:
+          description: User was successfully created
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get all users
+      description: Get all users with pagination and filtering
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of results to return
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search term for filtering users
+        - in: query
+          name: role
+          schema:
+            type: string
+          description: Filter by role
+        - in: query
+          name: disabled
+          schema:
+            type: boolean
+          description: Filter by disabled status
+      responses:
+        200:
+          description: Users list successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersListResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/form-sheet:
+    post:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Import users from sheet
+      description: Import multiple users from a sheet format with availabilities, priorities, and time constraints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormSheetRequest'
+      responses:
+        200:
+          description: Users were successfully imported
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/{id}:
+    put:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Update user
+      description: Update an existing user with all related data
+      parameters:
+        - in: path
+          name: id
+          description: User ID to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        200:
+          description: User was successfully updated
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Delete user
+      description: Delete a user by ID
+      parameters:
+        - in: path
+          name: id
+          description: User ID to delete
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: User was successfully deleted
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get user by ID
+      description: Get a specific user by ID with all related data
+      parameters:
+        - in: path
+          name: id
+          description: User ID to get
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: User successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserView'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/dynamic/{id}:
+    put:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Update user dynamically
+      description: Update specific user fields dynamically
+      parameters:
+        - in: path
+          name: id
+          description: User ID to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDynamicRequest'
+      responses:
+        200:
+          description: User was successfully updated
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/coordinates:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get users coordinates
+      description: Get users with their coordinates for mapping
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of results to return
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search term for filtering users by name
+      responses:
+        200:
+          description: Users coordinates successfully received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserCoordinateResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/resources/{name}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get users by resource name
+      description: Get users filtered by resource type (Activity, Block, Funder, Employee, Client, Location)
+      parameters:
+        - in: path
+          name: name
+          description: Resource name to filter by
+          required: true
+          schema:
+            type: string
+            enum: [Activity, Block, Funder, Employee, Client, Location]
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of results to return
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search term for filtering users by name
+      responses:
+        200:
+          description: Users by resource type successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersListResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/siblingGroups:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get sibling groups
+      description: Get sibling groups for users
+      parameters:
+        - in: query
+          name: query
+          required: true 
+          schema:
+            type: string
+          description: Search query for sibling groups
+        - in: query
+          name: limits
+          schema:
+            type: integer
+          description: Maximum number of results to return
+      responses:
+        200:
+          description: Sibling groups successfully received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSiblingGroupsResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/autocomplete:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get users for autocomplete
+      description: Get users for autocomplete functionality
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search query for autocomplete
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of results to return
+      responses:
+        200:
+          description: Autocomplete data successfully received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAutocompleteResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/autocomplete/{name}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get users by type for autocomplete
+      description: Get users filtered by type for autocomplete
+      parameters:
+        - in: path
+          name: name
+          description: User type to filter by
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search query for autocomplete
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of results to return
+      responses:
+        200:
+          description: Autocomplete data by type successfully received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAutocompleteResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/sheet-data/{name}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get sheet data for resource type
+      description: Get all necessary data for creating a sheet for a specific resource type
+      parameters:
+        - in: path
+          name: name
+          description: Resource type name
+          required: true
+          schema:
+            type: string
+            enum: [Activity, Block, Funder, Employee, Client, Location]
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search query
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Maximum number of results to return
+      responses:
+        200:
+          description: Sheet data successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSheetDataResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/constraints/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get user constraints
+      description: Get all constraints for a specific user
+      parameters:
+        - in: path
+          name: id
+          description: User ID to get constraints for
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: User constraints successfully received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserConstraintResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/check-timeconstraint/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Check time constraint for user
+      description: Check a specific time constraint for a user
+      parameters:
+        - in: path
+          name: id
+          description: User ID to check constraint for
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: constraintId
+          schema:
+            type: string
+            format: uuid
+          description: Constraint ID to check
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+          description: Date to check constraint for
+      responses:
+        200:
+          description: Time constraint check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeConstraintUserRelations'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/check-matchingconstraint/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Check matching constraint for user
+      description: Check a specific matching constraint for a user
+      parameters:
+        - in: path
+          name: id
+          description: User ID to check constraint for
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: constraintId
+          schema:
+            type: string
+            format: uuid
+          description: Constraint ID to check
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+          description: Date to check constraint for
+      responses:
+        200:
+          description: Matching constraint check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchingConstraintUserRelations'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/check-unmatchingconstraint/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Check unmatching constraint for user
+      description: Check a specific unmatching constraint for a user
+      parameters:
+        - in: path
+          name: id
+          description: User ID to check constraint for
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: constraintId
+          schema:
+            type: string
+            format: uuid
+          description: Constraint ID to check
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+          description: Date to check constraint for
+      responses:
+        200:
+          description: Unmatching constraint check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnmatchingConstraintUserRelations'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/check-usertouserconstraint/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Check user-to-user constraint for user
+      description: Check a specific user-to-user constraint for a user
+      parameters:
+        - in: path
+          name: id
+          description: User ID to check constraint for
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: constraintId
+          schema:
+            type: string
+            format: uuid
+          description: Constraint ID to check
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+          description: Date to check constraint for
+      responses:
+        200:
+          description: User-to-user constraint check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToUserFrequencyConstraintUserRelations'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/check-usertosessionconstraint/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Check user-to-session constraint for user
+      description: Check a specific user-to-session constraint for a user
+      parameters:
+        - in: path
+          name: id
+          description: User ID to check constraint for
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: constraintId
+          schema:
+            type: string
+            format: uuid
+          description: Constraint ID to check
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+          description: Date to check constraint for
+      responses:
+        200:
+          description: User-to-session constraint check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToSessionFrequencyConstraintUserRelations'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/users/constraint-gap/flags:
+    post:
+      security:
+        - bearerAuth: []
+      tags: [Users]
+      summary: Get constraint gap flags
+      description: Get constraint gap flags for users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConstraintGapFlagRequest'
+      responses:
+        200:
+          description: Constraint gap flags successfully received
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConstraintGapFlags'
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'

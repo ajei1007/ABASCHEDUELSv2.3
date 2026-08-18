@@ -1,0 +1,7 @@
+{
+  // Tell VS Code to suggest installing these when the workspace opens
+  "recommendations": [
+    "esbenp.prettier-vscode", // Prettier – opinionated code formatter
+    "dbaeumer.vscode-eslint" // ESLint – lint & autofix on save
+  ]
+}

@@ -1,0 +1,240 @@
+@mixin badge-inverse($bg) {
+  color: $bg;
+  background-color: $base-light-gray;
+
+  svg {
+    path {
+      fill: $bg;
+    }
+  }
+}
+
+@mixin button-outline-variant($color) {
+  color: $color;
+  border-color: $color;
+
+  svg {
+    path {
+      stroke: $color;
+    }
+  }
+
+  &:not(:disabled):not(.disabled):active,
+  &:not(:disabled):not(.disabled).active,
+  .show > &.dropdown-toggle {
+    color: $white;
+  }
+
+  @include hover() {
+    color: $white;
+    svg {
+      path {
+        stroke: $white;
+      }
+    }
+  }
+}
+
+@mixin button-variant($color) {
+  &:focus,
+  &.focus {
+    color: $white;
+  }
+
+  &:not(:disabled):not(.disabled):active,
+  &:not(:disabled):not(.disabled).active,
+  .show > &.dropdown-toggle {
+    color: $white;
+  }
+}
+
+@mixin checkbox($color) {
+  background-color: $color;
+  border-color: $color;
+}
+
+@mixin recur($color) {
+  box-shadow: 0 3px 10px rgb(orange, 1);
+}
+
+@mixin canceled($color) {
+  background: linear-gradient(
+      to top left,
+      rgba($color, 0) 0%,
+      rgba($color, 0) calc(45%),
+      rgba(white, 1) 50%,
+      rgba($color, 0) calc(55%),
+      rgba($color, 0) 100%
+    ),
+    linear-gradient(
+      to top right,
+      rgba($color, 0) 0%,
+      rgba($color, 0) calc(45%),
+      rgba(white, 1) 50%,
+      rgba($color, 0) calc(55%),
+      rgba($color, 0) 100%
+    ) !important;
+
+  background-color: rgba($color, 1) !important;
+
+  .fc-list-event-title {
+    text-decoration: line-through;
+  }
+}
+
+@mixin canceledRed($color) {
+  background: linear-gradient(
+      to top left,
+      rgba($color, 0) 0%,
+      rgba($color, 0) calc(45%),
+      rgba(black, 1) 50%,
+      rgba($color, 0) calc(55%),
+      rgba($color, 0) 100%
+    ),
+    linear-gradient(
+      to top right,
+      rgba($color, 0) 0%,
+      rgba($color, 0) calc(45%),
+      rgba(black, 1) 50%,
+      rgba($color, 0) calc(55%),
+      rgba($color, 0) 100%
+    ) !important;
+
+  background-color: rgba($color, 1) !important;
+
+  .fc-list-event-title {
+    text-decoration: line-through;
+  }
+}
+
+@mixin bg-light($color, $canceled: false, $recur: false) {
+  //background: rgba($color, 0.12) !important;
+  //   background: repeating-linear-gradient(
+  //   45deg,
+  //   rgba($color, 0.12),
+  //   rgba($color, 0.12) 5px,
+  //   rgba(red,.7) 5px,
+  //   rgba(red,.7) 10px
+  // );
+  white-space: break-spaces !important;
+  @if $canceled {
+    background: linear-gradient(
+        to top left,
+        rgba(red, 0) 0%,
+        rgba(red, 0) calc(45%),
+        rgba(red, 1) 50%,
+        rgba(red, 0) calc(55%),
+        rgba(red, 0) 100%
+      ),
+      linear-gradient(
+        to top right,
+        rgba(red, 0) 0%,
+        rgba(red, 0) calc(45%),
+        rgba(red, 1) 50%,
+        rgba(red, 0) calc(55%),
+        rgba(red, 0) 100%
+      ) !important;
+  }
+
+  background-color: rgba($color, 1) !important;
+
+  color: $color !important;
+  border-width: 10px;
+  border-radius: 30px;
+
+  .fc-h-event {
+    background-color: rgba($color, 1) !important;
+    border-width: 10px;
+  }
+
+  @if $recur {
+    box-shadow: 0 3px 10px rgb(orange, 1);
+  }
+
+  .fc-event-title-container {
+    overflow: auto;
+    // white-space: break-spaces!important;
+  }
+
+  .fc-event-time {
+    font-weight: 600 !important;
+  }
+
+  .fc-event-title,
+  .fc-event-time {
+    position: sticky !important;
+    right: 20px !important;
+    @if ($color == yellow) or ($color == pink) {
+      color: black !important;
+    } @else {
+      color: white;
+    }
+    text-decoration-thickness: 10%;
+  }
+  .fc-list-event-title .fc-event-title {
+    color: black !important;
+  }
+
+  .fc-bg-event {
+    opacity: 1;
+  }
+
+  .fc-list-event-dot {
+    border-color: $color !important;
+  }
+
+  &.fc-list-event {
+    //background: white;
+    background-color: rgba($color, 0.2) !important;
+    &:hover td {
+      background: rgba($color, 0.3) !important;
+    }
+
+    .fc-list-event-title {
+      color: 'black';
+    }
+    .fc-timeline-event {
+      border-radius: 10px;
+    }
+
+    //     .fc-timeline-event .fc-event-main {
+    //       flex-grow: 1 !important;
+    //         flex-shrink: 1;
+    //         min-width: 0;
+    //     }
+    //     .fc-h-event .fc-event-main-frame {
+    //       display: flex !important;
+    //   }
+
+    //   .fc-h-event .fc-event-title-container {
+    //     flex-grow: 1 !important;
+    //     flex-shrink: 1;
+    //     min-width: 0;
+    // }
+  }
+  border-radius: 10px;
+}
+
+@mixin bullet($color) {
+  background-color: $color;
+}
+@mixin custom-transition($properties, $duration, $timing) {
+  transition: $properties $duration $timing;
+}
+@mixin border-radius($radius) {
+  border-radius: $radius;
+}
+@mixin hover {
+  &:hover {
+    @content;
+  }
+}
+@mixin bg-light-str-replace($color) {
+  $color-str: remove-hash($color);
+  background-color: #{$color-str};
+}
+@mixin btn-styles($bg-color, $text-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  // Add other styles as needed
+}

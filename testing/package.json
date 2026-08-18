@@ -1,0 +1,31 @@
+{
+  "name": "playwright-project",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:dev":    "cross-env NODE_ENV=develop playwright test",
+    "test:stage":  "cross-env NODE_ENV=beta    playwright test",
+    "test:prod":   "cross-env NODE_ENV=prod    playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report",
+
+    "dev":     "vite",
+    "build":   "vite build",
+    "preview": "vite preview",
+
+"coverage": "npx rimraf .nyc_output && playwright test && nyc report --reporter=html --reporter=text-summary --report-dir=coverage"
+,    "coverage:beta": "cross-env NODE_ENV=beta VITE_COVERAGE=true npm run coverage",
+    "report:fe":     "nyc report --reporter=html --report-dir=coverage/frontend"
+  },
+  "devDependencies": {
+    "@playwright/test":      "^1.30.0",
+    "@types/node":           "^18.16.0",
+    "cross-env":             "^7.0.3",
+    "dotenv":                "^16.0.0",
+    "typescript":            "^4.9.5",
+    "vite":                  "^5.2.0",
+    "vite-plugin-istanbul":  "^7.0.0",
+    "nyc":                   "^15.1.0",
+    "rimraf":                "^5.0.0"
+  }
+}

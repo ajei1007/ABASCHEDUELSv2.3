@@ -1,0 +1,26 @@
+'use strict';
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    const transaction = await queryInterface.sequelize.transaction();
+    try {
+      await queryInterface.sequelize.query(
+        'UPDATE `events` SET `startActual` = `start` WHERE `startActual` IS NULL', 
+        { transaction });
+
+      await queryInterface.sequelize.query(
+        'UPDATE `events` SET `endActual` = `end` WHERE `endActual` IS NULL', 
+        { transaction });
+
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  },
+
+  async down(queryInterface, Sequelize) {
+    console.error('Down migration not implemented: irreversible data change (nulls overwritten).');
+  }
+};

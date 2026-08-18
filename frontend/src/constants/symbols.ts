@@ -1,0 +1,1 @@
+export const REACT_SELECT_OPTION_DISABLED = Symbol('react-select-option-disabled')

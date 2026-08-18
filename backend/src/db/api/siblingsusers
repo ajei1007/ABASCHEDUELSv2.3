@@ -1,0 +1,109 @@
+const db = require('../models');
+const FileDBApi = require('./file');
+const BranchesDBApi = require('./branches');
+const crypto = require('crypto');
+const Utils = require('../utils');
+
+const Sequelize = db.Sequelize;
+const Op = Sequelize.Op;
+
+module.exports = class SiblingsUsersDBApi {
+  static async create(data, options) {
+    const currentUser = (options && options.currentUser) || { id: null };
+    const transaction = (options && options.transaction) || undefined;
+
+    const siblingsusers = await db.siblingsusers.create(
+      {
+        id: data.id || undefined,
+        userId: data.userId || null,
+      },
+      { transaction },
+    );
+
+    return siblingsusers;
+  }
+
+  static async update(id, data, options) {
+    const currentUser = (options && options.currentUser) || { id: null };
+    const transaction = (options && options.transaction) || undefined;
+
+    const siblingsusers = await db.siblingsusers.findByPk(id, {
+      transaction,
+    });
+
+    await siblingsusers.update(
+      {
+        userId: data.userId || null,
+      },
+      { transaction },
+    );
+
+    return siblingsusers;
+  }
+
+  static async remove(id, options) {
+    const currentUser = (options && options.currentUser) || { id: null };
+    const transaction = (options && options.transaction) || undefined;
+
+    const siblingsusers = await db.siblingsusers.findByPk(id, options);
+
+    await siblingsusers.update(
+      {},
+      {
+        transaction,
+      },
+    );
+
+    await siblingsusers.destroy({
+      transaction,
+    });
+
+    return siblingsusers;
+  }
+
+  static async findBy(where, options) {
+    const transaction = (options && options.transaction) || undefined;
+
+    const siblingsusers = await db.siblingsusers.findOne(
+      { where },
+      { transaction },
+    );
+
+    if (!siblingsusers) {
+      return siblingsusers;
+    }
+
+    const output = siblingsusers.get({ plain: true });
+
+    return output;
+  }
+
+  static async findAll(filter, options) {
+    var limit = filter.limit || 0;
+    var offset = 0;
+    const currentPage = +filter.page - 1;
+
+    offset = currentPage * limit;
+
+    var orderBy = null;
+
+    const transaction = (options && options.transaction) || undefined;
+    let where = {};
+    let include = [];
+
+    if (filter) {
+      if (filter.id) {
+        where = {
+          ...where,
+          ['id']: Utils.uuid(filter.id),
+        };
+      }
+    }
+    const query = `SELECT userId FROM siblingsUsers WHERE id = '${filter.id}'`;
+    const timeconstraints = await db.sequelize.query(query, {
+      type: db.sequelize.QueryTypes.SELECT,
+      raw: true,
+    });
+    return { rows: timeconstraints, count: timeconstraints.length };
+  }
+};

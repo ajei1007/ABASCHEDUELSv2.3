@@ -1,0 +1,1 @@
+export const isObjEmpty = (obj: object) => !obj || Object.keys(obj)?.length === 0;

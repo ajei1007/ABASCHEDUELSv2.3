@@ -1,0 +1,21 @@
+export const appointmentSelectors = {
+  notesField: 'textarea[name="notes"]',
+  addEventButton: '[data-qa="appointment-add-event"]',
+  updateEventButton: '[data-qa="appointment-update"]',
+  deleteButton: '[data-qa="appointment-delete"]',
+  cancelSingleButton: '[data-qa="appointment-cancel-single"]',
+  cancelAllButton: 'button:has-text("Cancel All")',
+  markUnavailableButton: 'button:has-text("Mark Unavailable")',
+  activityDropdown: '[data-qa="appointment-activity"]',
+  activityOption: 'div[role="option"] div div',
+  addEventSubmit: 'button[type="submit"]:has-text("Add Event")',
+  activityTooltip: (activity: string) => `a[data-tooltip*="${activity}"]`,
+  cancelReasonDropdown: '#reason_canceled > .select__control > .select__value-container',
+  cancelReasonOption: (reason: string) => `[role="option"]:has-text("${reason}")`,
+  canceledStatusEvent: (startTime: string, endTime: string, activity: string) => 
+    `[data-qa="calendar-event-canceled"][data-activity="${activity}"][data-start-time="${startTime}"][data-end-time="${endTime}"]`,
+  dateRangeButton: 'Date Range',
+  firstDayButton: '1', 
+  lastDayButton: '28',
+  applyButton: 'Apply',
+} as const;

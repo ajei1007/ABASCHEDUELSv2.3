@@ -1,0 +1,226 @@
+tags:
+  - name: Subgroups
+    description: The Subgroups managing API
+
+paths:
+  /api/subgroups:
+    post:
+      security:
+        - bearerAuth: []
+      tags: [Subgroups]
+      summary: Add new item
+      description: Add new item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubgroupRequest'
+      responses:
+        200:
+          description: The item was successfully added
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Subgroups]
+      summary: Get all subgroups
+      description: Get all subgroups
+      responses:
+        200:
+          description: Subgroups list successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubgroupsListResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/subgroups/{id}:
+    put:
+      security:
+        - bearerAuth: []
+      tags: [Subgroups]
+      summary: Update the data of the selected item
+      description: Update the data of the selected item
+      parameters:
+        - in: path
+          name: id
+          description: Item ID to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Set new item data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSubgroupRequest'
+      responses:
+        200:
+          description: The item data was successfully updated
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      security:
+        - bearerAuth: []
+      tags: [Subgroups]
+      summary: Delete the selected item
+      description: Delete the selected item
+      parameters:
+        - in: path
+          name: id
+          description: Item ID to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: The item was successfully deleted
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Subgroups]
+      summary: Get subgroup by ID
+      description: Get subgroup by ID
+      parameters:
+        - in: path
+          name: id
+          description: Item ID to get
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Item successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubgroupView'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /api/subgroups/autocomplete:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Subgroups]
+      summary: Get subgroups for autocomplete
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Autocomplete data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubgroupAutocompleteResponse'
+
+  /api/subgroups/groupings/{groups}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: [Subgroups]
+      summary: Get subgroups by grouping name
+      description: Get subgroups filtered by specific grouping name
+      parameters:
+        - in: path
+          name: groups
+          description: Grouping name to filter by
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: limit
+          description: Maximum number of results to return
+          schema:
+            type: string
+        - in: query
+          name: offset
+          description: Number of results to skip for pagination
+          schema:
+            type: string
+        - in: query
+          name: field
+          description: Field name to sort by
+          schema:
+            type: string
+        - in: query
+          name: sort
+          description: Sort direction
+          schema:
+            type: string
+            enum: [asc, desc]
+        - in: query
+          name: branches
+          description: Pipe-separated branch UUIDs to filter by (uuid1|uuid2|uuid3)
+          schema:
+            type: string
+        - in: query
+          name: user
+          description: Pipe-separated user UUIDs to filter by (uuid1|uuid2|uuid3)
+          schema:
+            type: string
+      responses:
+        200:
+          description: Subgroups list successfully received
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubgroupGroupingsResponse'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          $ref: '#/components/responses/NotFoundError'
+        500:
+          $ref: '#/components/responses/ServerError'

@@ -1,0 +1,76 @@
+@import '../../styles/helpers';
+
+.root {
+  width: $sidebar-width-open;
+  position: fixed;
+  left: -$sidebar-width-open;
+  top: var(--banner-height, 0px);
+  bottom: 0;
+  padding: 0 8px;
+  background-color: $sidebar-color;
+  overflow-y: auto;
+  height: calc(100% - var(--banner-height, 0px));
+
+  @media print {
+    display: none;
+  }
+
+  :global(.sidebar-hide) & {
+    display: none;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    position: static !important;
+    width: auto;
+    margin: 12px 24px 0;
+    border-radius: 8px;
+    padding: 0;
+    height: 0;
+    transform: none; /* Always hide on small screens */
+
+    .logo,
+    .sidebarAlerts,
+    .sidebarLabels {
+      display: none;
+    }
+  }
+}
+
+.rootOpened {
+  left: 0;
+  transition: left $sidebar-transition-time ease-in-out;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0 0.5rem 0;
+  padding-left: 0.5rem;
+  width: 100%;
+
+  h4 {
+    margin-bottom: 0;
+    font-size: 1.5rem;
+  }
+}
+
+.logo {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav {
+  padding-bottom: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  li > a > span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+  }
+}

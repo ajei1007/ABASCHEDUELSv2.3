@@ -1,0 +1,38 @@
+{
+  "NEW_APPOINTMENT": {
+    "title": "",
+    "body": ""
+  },
+  "TIMEOFF_APPROVED": {
+    "title": "",
+    "body": ""
+  },
+  "TIMEOFF_DECLINED": {
+    "title": "",
+    "body": ""
+  },
+  "CLIENT_APPROVED_APPOINTMENT": {
+    "title": "",
+    "body": ""
+  },
+  "CLIENT_LATED_APPOINTMENT": {
+    "title": "",
+    "body": ""
+  },
+  "CLIENT_CANCELS_APPOINTMENT": {
+    "title": "",
+    "body": ""
+  },
+  "CLIENT_DECLINES_APPOINTMENT": {
+    "title": "",
+    "body": ""
+  },
+  "CLIENT_CREATED_TIMEOFF": {
+    "title": "",
+    "body": ""
+  },
+  "CLIENT_DELETED_TIMEOFF": {
+    "title": "",
+    "body": ""
+  }
+}

@@ -1,0 +1,145 @@
+name: Beta ECS | ABA Schedules
+
+on:
+  push:
+    branches:
+      - "release/**"
+      # - "hotfix/**"
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: beta
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ vars.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: beta-${{ github.sha }}
+        run: |
+          # Build the Docker image
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG -f ecs/Dockerfile.backend .
+          # Tag the image
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          # Push the image to ECR
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Render ECS task definition
+        id: render-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ecs/beta-node.json # Task definition json file for this env
+          container-name: beta-abaschedules-fullstack
+          image: ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY }}:beta-${{ github.sha }}
+          environment-variables: |
+            NODE_ENV=production
+            APP_ENV=beta
+            PORT=8080
+            MOBILE_APP_ENABLED=true
+            REDIS_DISABLED=false
+            REDIS_URL=${{ vars.REDIS_URL }}
+            ENABLE_MONITORING=true
+            ATATUS_PROJECT_NAME=${{ vars.ATATUS_PROJECT_NAME }}
+            ATATUS_API_KEY=${{ vars.ATATUS_API_KEY }}
+            ATATUS_ENABLE_PROBABILITY=${{ vars.ATATUS_ENABLE_PROBABILITY }}
+            SENTRY_DSN=${{ vars.SENTRY_DSN }}
+            SUPER_ADMIN_PASS=${{ vars.SUPER_ADMIN_PASS }}
+            SWAGGER_URL=https://beta.abaschedules.com
+            JIRA_DOMAIN=${{ vars.JIRA_DOMAIN }}
+            JIRA_EMAIL=${{ vars.JIRA_EMAIL }}
+            JIRA_API_TOKEN=${{ vars.JIRA_API_TOKEN }}
+            JIRA_PROJECT_KEY=${{ vars.JIRA_PROJECT_KEY }}
+            SLACK_ADMIN_TASKS_WEBHOOK_URL=${{ vars.SLACK_ADMIN_TASKS_WEBHOOK_URL }}
+            SLACK_BUGS_WEBHOOK_URL=${{ vars.SLACK_BUGS_WEBHOOK_URL }}
+            SLACK_FEATURE_REQUESTS_WEBHOOK_URL=${{ vars.SLACK_FEATURE_REQUESTS_WEBHOOK_URL }}
+
+            GOOGLE_MAPS_API_KEY=${{ vars.GOOGLE_MAPS_API_KEY }}
+            GOOGLE_DISTANCEMATRIX_API_KEY=${{ vars.GOOGLE_DISTANCEMATRIX_API_KEY }}
+
+            BETA_DB_USER=${{ vars.BETA_DB_USER }}
+            BETA_DB_PASS=${{ vars.BETA_DB_PASS }}
+            BETA_DB_NAME=${{ vars.BETA_DB_NAME }}
+            BETA_DB_HOST_READ=${{ vars.BETA_DB_HOST_READ }}
+            BETA_DB_HOST_WRITE=${{ vars.BETA_DB_HOST_WRITE }}
+            BETA_DB_PORT=${{ vars.BETA_DB_PORT }}
+
+      - name: Deploy to ECS service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+          service: ${{ vars.SERVICE_NAME }}
+          cluster: ${{ vars.CLUSTER_NAME }}
+          wait-for-service-stability: true
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    environment:
+      name: beta
+    strategy:
+      matrix:
+        node-version: [22.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: USE NODE.JS ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache-dependency-path: "./frontend/yarn.lock"
+          cache: "yarn"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ vars.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build
+        env:
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_FRONTEND_PROJECT }}
+          SENTRY_DSN: ${{ secrets.SENTRY_FRONTEND_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          TSC_COMPILE_ON_ERROR: true
+          NODE_OPTIONS: "--max-old-space-size=8192"
+        run: yarn build:beta
+
+      - name: Deploy to S3 and Invalidate Cache
+        run: |
+          aws s3 sync builds/beta s3://beta-react-app --delete
+          aws cloudfront create-invalidation --distribution-id E1074BT3GOI45C --paths "/*"
+  jira-sync:
+    needs: [backend]
+    uses: ./.github/workflows/jira_deploy.yml
+    with:
+      environment: "beta"
+      deployment_name: "Beta ECS"
+      description: "Deployment to the Beta environment for QA."
+      url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+    secrets:
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}

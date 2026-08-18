@@ -1,0 +1,49 @@
+@import '../../styles/helpers';
+
+.root {
+  height: calc(100% - var(--banner-height, 0px));
+  position: relative;
+  left: 0;
+  transition:
+    left $sidebar-transition-time ease-in-out,
+    right $sidebar-transition-time ease-in-out;
+  padding-top: 0;
+  padding-bottom: 0;
+  top: var(--banner-height, 0px);
+}
+
+.wrap {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  margin-left: $sidebar-width-open;
+  flex-direction: column;
+  right: 0;
+  left: 0;
+  transition:
+    left $sidebar-transition-time ease-in-out,
+    margin-left $sidebar-transition-time ease-in-out;
+  padding-top: 0;
+  padding-bottom: 0;
+
+  @media print {
+    margin: 0;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    margin-left: 0;
+    left: 0;
+  }
+
+  :global(.sidebar-hide) & {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.content {
+  position: relative;
+  flex-grow: 1;
+  padding: 0 1rem;
+  background-color: $body-bg;
+}

@@ -1,0 +1,42 @@
+@import '../../../../styles/helpers.scss';
+
+.navItem {
+  padding: 8px 16px;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  &:hover {
+    color: $default;
+    border-radius: 0.5rem;
+  }
+  // &:focus {
+  //   background-color: #4d53e0;
+  //   border-radius: 0.5rem;
+  //   color: #fff;
+  // }
+  // .navItemIcon {
+  //   &:focus {
+  //     color: #fff;
+  //   }
+  // }
+}
+.activeItem {
+  background-color: #4d53e0;
+  border-radius: 0.5rem;
+  color: #fff;
+  &:hover {
+    color: #fff;
+    border-radius: 0.5rem;
+  }
+}
+
+.panel {
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  border-radius: 0;
+}
+
+.iframe {
+  border-radius: 8px;
+}

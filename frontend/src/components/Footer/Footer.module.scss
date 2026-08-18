@@ -1,0 +1,18 @@
+@import '../../styles/helpers';
+
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+  color: $base-dark-gray;
+  font-size: $font-size-sm;
+  align-self: flex-end;
+}
+.footerContainer {
+  display: flex;
+  flex-direction: row;
+}
+.footerLabel {
+  margin-right: 4px;
+}

@@ -1,0 +1,49 @@
+{
+  "family": "production-abaschedules-fullstack-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "2048",
+  "memory": "4096",
+  "ephemeralStorage": {
+    "sizeInGiB": 150
+  },
+  "taskRoleArn": "arn:aws:iam::619903709069:role/abaschedules-ecs-task-role",
+  "executionRoleArn": "arn:aws:iam::619903709069:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "production-abaschedules-fullstack",
+      "image": "619903709069.dkr.ecr.us-east-1.amazonaws.com/production-abaschedules-fullstack",
+      "cpu": 2048,
+      "memory": 4096,
+      "memoryReservation": 4096,
+      "portMappings": [
+        {
+          "name": "production-abaschedules-fullstack-8080-tcp",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "environment": [],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "ulimits": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/production-abaschedules-fullstack-task",
+          "mode": "non-blocking",
+          "awslogs-create-group": "true",
+          "max-buffer-size": "25m",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
+      "systemControls": []
+    }
+  ]
+}

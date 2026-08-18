@@ -1,0 +1,123 @@
+services:
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+    ports:
+      - 8080:8080
+    env_file:
+      - ./backend/.env
+    environment:
+      REDIS_URL: "redis://redis:6379"
+    depends_on:
+      - db
+      - redis
+      - mattermost
+  db:
+    # At time of writing in production we're running Aurora MySQL 3.05.2, which
+    # is "compatible with MySQL 8.0.32"
+    image: mysql:8.0.32
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: my_secret_password
+      MYSQL_DATABASE: app_db
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: db_user_pass
+    ports:
+      - 3307:3306
+    volumes:
+      - abadbdata:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
+  redis:
+    image: redis:7.2
+    command: redis-server
+    ports:
+      - 6379:6379
+
+  mattermost-db:
+    image: postgres:15-alpine
+    container_name: mattermost-db
+    environment:
+      POSTGRES_DB: mattermost
+      POSTGRES_USER: mattermost_user
+      POSTGRES_PASSWORD: mattermost_pass
+    ports:
+      - 5432:5432
+    volumes:
+      - mattermost-dbdata:/var/lib/postgresql/data
+        
+  mattermost:
+    image: mattermost/mattermost-team-edition:release-10.5
+    container_name: mattermost
+    restart: unless-stopped
+    ports:
+      - 8065:8065
+    environment:
+      # Database settings
+      MM_SQLSETTINGS_DRIVERNAME: postgres
+      MM_SQLSETTINGS_DATASOURCE: postgres://mattermost_user:mattermost_pass@mattermost-db:5432/mattermost?sslmode=disable&connect_timeout=10
+      
+      # Basic settings
+      MM_SERVICESETTINGS_SITEURL: http://localhost:8065
+      MM_SERVICESETTINGS_ENABLEDEVELOPER: true
+      MM_SERVICESETTINGS_ENABLETESTING: true
+      
+      # Domain configuration
+      DOMAIN: localhost
+      
+      # Support settings
+      MM_SUPPORTSETTINGS_SUPPORTEMAIL: support@abaschedules.com
+      
+      # File storage
+      MM_FILESETTINGS_DRIVERNAME: local
+      MM_FILESETTINGS_DIRECTORY: /mattermost/data/
+      
+      # Plugin settings  
+      MM_PLUGINSETTINGS_ENABLE: true
+      MM_PLUGINSETTINGS_ENABLEUPLOADS: true
+      
+      # Team settings
+      MM_TEAMSETTINGS_ENABLETEAMCREATION: true
+      MM_TEAMSETTINGS_ENABLEUSERCREATION: true
+
+      
+      # API settings for your integration
+      MM_SERVICESETTINGS_ENABLEBOTACCOUNTCREATION: true
+      MM_SERVICESETTINGS_ENABLEPOSTUSERNAMEOVERRIDE: true
+      MM_SERVICESETTINGS_ENABLEPOSTICONOVERRIDE: true
+      MM_SERVICESETTINGS_ENABLEAPIUSERDELETION: true
+      
+      # Install type
+      MM_INSTALL_TYPE: docker
+    volumes:
+      - mattermost-data:/mattermost/data
+      - mattermost-logs:/mattermost/logs  
+      - mattermost-config:/mattermost/config
+      - mattermost-plugins:/mattermost/plugins
+      - mattermost-client-plugins:/mattermost/client/plugins
+      - mattermost-bleve-indexes:/mattermost/bleve-indexes
+    depends_on:
+      - mattermost-db
+
+volumes:
+  abadbdata:
+  mattermost-dbdata:
+  mattermost-data:
+  mattermost-logs:
+  mattermost-config:
+  mattermost-plugins:
+  mattermost-client-plugins:
+  mattermost-bleve-indexes:

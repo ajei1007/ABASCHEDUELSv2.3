@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "react-app", // CRA’s base rules
+    "plugin:prettier/recommended"
+    /* expands to:
+        - adds eslint-plugin-prettier
+        - enables the Prettier rule
+        - extends eslint-config-prettier to switch off any style rules that clash
+    */
+  ],
+  "rules": {
+    // Example: keep React prop‑types off if you prefer TS or no runtime checks
+    "react/prop-types": "off",
+    "prettier/prettier": "warn"
+  }
+}
